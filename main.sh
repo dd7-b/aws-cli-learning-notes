@@ -64,3 +64,16 @@ aws s3api list-objects \
   --prefix "$prefix" \
   --query "Contents[?contains(LastModified, '$today_date')].Key" \
   --output text
+
+# Lookup CloudTrail events related to a specific EC2 instance
+aws cloudtrail lookup-events \
+  --lookup-attributes AttributeKey=ResourceName,AttributeValue=<instance_id> \
+  --query 'Events[*].[EventName,EventTime,Username,EventSource,Resources[0].ResourceType,Resources[0].ResourceName]' \
+  --output table \
+  --profile '<profile_name>'
+
+# List S3 objects under a prefix and filter specific files
+aws s3 ls 's3://<s3_bucket_name>/<s3_prefix>/' \
+  --profile '<profile_name>' \
+  --human-readable \
+  --summarize | grep -E '<file_name1>|<file_name2>'
